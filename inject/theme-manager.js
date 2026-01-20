@@ -73,24 +73,32 @@ const ESUtilsThemeManager = (function () {
 
   function removeStyles() {
     const ids = getConfig().CssIdentifiers || {};
-    document
-      .getElementById(ids.THEME_STYLE_ID || "es-utils-theme-style")
-      ?.remove();
-    document.querySelector(".esutils--fallback")?.remove();
-    document.documentElement.classList.remove(
-      ids.DARK_THEME_CLASS || "es-utils-dark-theme",
+    const styleEl = document.getElementById(
+      ids.THEME_STYLE_ID || "es-utils-theme-style",
     );
+    const fallbackEl = document.querySelector(".esutils--fallback");
+    const themeClass = ids.DARK_THEME_CLASS || "es-utils-dark-theme";
+    const hasClass = document.documentElement.classList.contains(themeClass);
+
+    if (styleEl) styleEl.remove();
+    if (fallbackEl) fallbackEl.remove();
+    if (hasClass) document.documentElement.classList.remove(themeClass);
   }
 
   function apply() {
     const ids = getConfig().CssIdentifiers || {};
     const engine = getEngine();
-    removeStyles();
+
     saveSession();
 
-    if (_mode === "off") return;
+    if (_mode === "off") {
+      removeStyles();
+      return;
+    }
 
     const themeClass = ids.DARK_THEME_CLASS || "es-utils-dark-theme";
+
+    removeStyles();
     document.documentElement.classList.add(themeClass);
 
     const themeConfig = {
@@ -100,6 +108,7 @@ const ESUtilsThemeManager = (function () {
       grayscale: _grayscale,
       sepia: _sepia,
     };
+
     const css = engine.createCSSFilterStyleSheet
       ? engine.createCSSFilterStyleSheet({
           themeClass,
@@ -188,7 +197,8 @@ const ESUtilsThemeManager = (function () {
     getSepia: () => _sepia,
 
     update(s) {
-      if (s.mode === "auto" || s.mode === "light") _mode = "off";
+      if (s.mode === "auto" || s.mode === "light" || s.mode === "off")
+        _mode = "off";
       else if (s.mode === "dark") _mode = "dark";
       if (s.brightness !== undefined) _brightness = s.brightness;
       if (s.contrast !== undefined) _contrast = s.contrast;

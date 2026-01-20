@@ -111,7 +111,15 @@ async function notifyTabs() {
     /^(chrome|edge|about|devtools|view-source):|chrome-extension:/;
   tabs.forEach((tab) => {
     if (tab.id && tab.url && !blocked.test(tab.url)) {
-      chrome.tabs.sendMessage(tab.id, { type: "SETTINGS_UPDATED", settings });
+      chrome.tabs.sendMessage(
+        tab.id,
+        { type: "SETTINGS_UPDATED", settings },
+        () => {
+          if (chrome.runtime.lastError) {
+            // Ignore tabs without content script
+          }
+        },
+      );
     }
   });
 }
