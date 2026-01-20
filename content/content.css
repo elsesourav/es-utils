@@ -1,0 +1,159 @@
+/* ES Utils - Image Button Styles */
+
+/* Button Container */
+.es-utils-img-buttons {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Show buttons on hover */
+.es-utils-img-wrapper:hover .es-utils-img-buttons,
+.es-utils-has-buttons:hover .es-utils-img-buttons,
+*:hover > .es-utils-img-buttons {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Image Wrapper */
+.es-utils-img-wrapper {
+  position: relative !important;
+  display: inline-block;
+}
+
+.es-utils-img-wrapper img {
+  display: block;
+}
+
+/* Buttons */
+.es-utils-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.es-utils-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Download Button */
+.es-utils-btn-download {
+  background: rgba(59, 130, 246, 0.9);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.es-utils-btn-download:hover {
+  background: rgba(37, 99, 235, 1);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+}
+
+.es-utils-btn-download:active {
+  transform: scale(0.95);
+}
+
+/* Copy Button */
+.es-utils-btn-copy {
+  background: rgba(107, 114, 128, 0.9);
+  color: white;
+  box-shadow: 0 2px 8px rgba(107, 114, 128, 0.4);
+}
+
+.es-utils-btn-copy:hover {
+  background: rgba(75, 85, 99, 1);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.5);
+}
+
+.es-utils-btn-copy:active {
+  transform: scale(0.95);
+}
+
+/* Success State */
+.es-utils-btn-success {
+  background: rgba(34, 197, 94, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4) !important;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .es-utils-btn-download {
+    background: rgba(96, 165, 250, 0.9);
+  }
+
+  .es-utils-btn-download:hover {
+    background: rgba(59, 130, 246, 1);
+  }
+
+  .es-utils-btn-copy {
+    background: rgba(156, 163, 175, 0.9);
+  }
+
+  .es-utils-btn-copy:hover {
+    background: rgba(107, 114, 128, 1);
+  }
+}
+
+/* Responsive adjustments for small images */
+.es-utils-img-wrapper img[width],
+.es-utils-img-wrapper img[style*="width"] {
+  max-width: 100%;
+}
+
+/* Prevent layout shifts */
+.es-utils-img-wrapper {
+  line-height: 0;
+}
+
+/* Tooltip styles */
+.es-utils-btn[title] {
+  position: relative;
+}
+
+.es-utils-btn:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Animation for button appearance */
+@keyframes es-utils-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.es-utils-img-wrapper:hover .es-utils-btn,
+.es-utils-has-buttons:hover .es-utils-btn {
+  animation: es-utils-fade-in 0.2s ease forwards;
+}
+
+.es-utils-btn:nth-child(2) {
+  animation-delay: 0.05s;
+}

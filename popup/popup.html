@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ES Utils</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div id="root">
+      <div class="container">
+        <header class="header">
+          <div class="head">
+            <img
+              src="./../assets/icons/icon16.png"
+              alt="ES Utils"
+              class="header-icon"
+            />
+            <h1>Utils</h1>
+          </div>
+          <p class="subtitle">Utility Tools Collection</p>
+        </header>
+
+        <main class="main">
+          <!-- Image Utils Section -->
+          <section class="section">
+            <h2 class="section-title">Image Utilities</h2>
+
+            <div class="option-item">
+              <div class="option-info">
+                <span class="option-label">Image Download Button</span>
+                <span class="option-desc">Show download button on images</span>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="toggleImageDownload" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="option-item">
+              <div class="option-info">
+                <span class="option-label">Copy Image URL Button</span>
+                <span class="option-desc">Show copy link button on images</span>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="toggleCopyImageUrl" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </section>
+
+          <!-- Theme Section -->
+          <section class="section">
+            <h2 class="section-title">Page Theme</h2>
+
+            <div class="option-item">
+              <div class="option-info">
+                <span class="option-label">Dark Mode</span>
+                <span class="option-desc">Apply dark theme to page</span>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="toggleDarkMode" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="option-item" id="brightnessOption">
+              <div class="option-info">
+                <span class="option-label">Brightness</span>
+              </div>
+              <div class="custom-slider" id="brightnessSliderContainer">
+                <div class="custom-slider__track">
+                  <div
+                    class="custom-slider__track__fill"
+                    id="brightnessFill"
+                  ></div>
+                </div>
+                <div class="custom-slider__thumb-wrapper">
+                  <div class="custom-slider__thumb" id="brightnessThumb"></div>
+                </div>
+                <span class="custom-slider__value" id="brightnessValue"
+                  >100</span
+                >
+                <input
+                  type="range"
+                  id="brightnessSlider"
+                  min="50"
+                  max="150"
+                  value="100"
+                  step="5"
+                />
+              </div>
+            </div>
+
+            <div class="option-item" id="contrastOption">
+              <div class="option-info">
+                <span class="option-label">Contrast</span>
+              </div>
+              <div class="custom-slider" id="contrastSliderContainer">
+                <div class="custom-slider__track">
+                  <div
+                    class="custom-slider__track__fill"
+                    id="contrastFill"
+                  ></div>
+                </div>
+                <div class="custom-slider__thumb-wrapper">
+                  <div class="custom-slider__thumb" id="contrastThumb"></div>
+                </div>
+                <span class="custom-slider__value" id="contrastValue">100</span>
+                <input
+                  type="range"
+                  id="contrastSlider"
+                  min="50"
+                  max="150"
+                  value="100"
+                  step="5"
+                />
+              </div>
+            </div>
+          </section>
+
+          <!-- Future sections can be added here -->
+          <section class="section coming-soon">
+            <h2 class="section-title">More Utilities</h2>
+            <p class="coming-soon-text">Coming soon...</p>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <span class="version">v1.0.0</span>
+        </footer>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
