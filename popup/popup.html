@@ -22,9 +22,27 @@
         </header>
 
         <main class="main">
+          <section class="section">
+            <h2 class="section-title">Extension Control</h2>
+
+            <div class="option-item">
+              <div class="option-info">
+                <span class="option-label">Enable ES Utils</span>
+                <span class="option-desc"
+                  >Turn all extension features on or off</span
+                >
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="toggleExtensionEnabled" />
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </section>
+
           <!-- Image Utils Section -->
           <section class="section">
             <h2 class="section-title">Image Utilities</h2>
+            <p class="section-note">Applies globally to all websites.</p>
 
             <div class="option-item">
               <div class="option-info">
@@ -52,6 +70,7 @@
           <!-- Theme Section -->
           <section class="section">
             <h2 class="section-title">Page Theme</h2>
+            <p class="section-note" id="themeSiteScope"></p>
 
             <div class="option-item">
               <div class="option-info">
@@ -132,6 +151,7 @@
       </div>
     </div>
 
+    <script src="../utils/settings.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>

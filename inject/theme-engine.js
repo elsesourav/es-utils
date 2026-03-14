@@ -20,6 +20,11 @@ function getCSSFilterValue(config) {
 function createCSSFilterStyleSheet({ themeClass, config, isTopFrame = true }) {
   const root = `html.${themeClass}`;
   const lines = ["@media screen {"];
+  const inversePercent = (value) => {
+    const numeric = Number(value);
+    const safeValue = Math.max(1, Number.isFinite(numeric) ? numeric : 100);
+    return Math.round((10000 / safeValue) * 100) / 100;
+  };
 
   if (config.isDarkMode && isTopFrame) {
     let filter = "invert(100%) hue-rotate(180deg)";
@@ -37,15 +42,14 @@ function createCSSFilterStyleSheet({ themeClass, config, isTopFrame = true }) {
       `${root} h1, ${root} h2, ${root} h3, ${root} h4, ${root} h5, ${root} h6, ${root} a { color: inherit !important; opacity: 1 !important; }`,
     );
 
-    let reverseFilter = "";
-    if (config.contrast !== 100)
-      reverseFilter += `contrast(${Math.round((10000 / config.contrast) * 100) / 100}%) `;
+    let reverseFilter = "invert(100%) hue-rotate(180deg)";
     if (config.brightness !== 100)
-      reverseFilter += `brightness(${Math.round((10000 / config.brightness) * 100) / 100}%) `;
-    reverseFilter += "invert(100%) hue-rotate(180deg)";
+      reverseFilter += ` brightness(${inversePercent(config.brightness)}%)`;
+    if (config.contrast !== 100)
+      reverseFilter += ` contrast(${inversePercent(config.contrast)}%)`;
 
     lines.push(
-      `${root} img, ${root} picture, ${root} picture *, ${root} video, ${root} canvas, ${root} svg:not([class*="icon"]), ${root} [style*="background-image"], ${root} iframe { -webkit-filter: ${reverseFilter} !important; filter: ${reverseFilter} !important; }`,
+      `${root} img, ${root} picture, ${root} picture *, ${root} video, ${root} canvas, ${root} svg, ${root} object, ${root} embed, ${root} [style*="background-image"], ${root} iframe { -webkit-filter: ${reverseFilter} !important; filter: ${reverseFilter} !important; }`,
     );
     lines.push(
       `${root} select, ${root} select *, ${root} option, ${root} optgroup, ${root} datalist, ${root} [popover], ${root} dialog { -webkit-filter: invert(100%) hue-rotate(180deg) !important; filter: invert(100%) hue-rotate(180deg) !important; }`,

@@ -9,6 +9,7 @@ const DEFAULT_THEME = {
   sepia: 0,
 };
 const StorageKeys = {
+  EXTENSION_ENABLED: "__esutils__extensionEnabled",
   THEME_MODE: "__esutils__themeMode",
   BRIGHTNESS: "__esutils__brightness",
   CONTRAST: "__esutils__contrast",

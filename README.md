@@ -12,6 +12,15 @@ Download and copy image URLs with overlay buttons that appear when you hover ove
 - Copy optimized image URLs to clipboard
 - Automatically extracts real URLs from Google Images, Google Drive, Dropbox, and Pinterest
 - Works with lazy-loaded images
+- Global setting applied across all websites
+
+### Extension Control
+
+Use a master toggle to enable or disable the entire extension.
+
+- Turns all on-page features on or off
+- Removes dark mode immediately when disabled
+- Hides image context-menu actions when disabled
 
 ### Dark Mode
 
@@ -34,9 +43,11 @@ Toggle dark mode on any website with adjustable brightness and contrast.
 
 Click the extension icon in your toolbar to access settings.
 
+Use the top-level "Enable ES Utils" switch to turn the whole extension on or off.
+
 ### Image Buttons
 
-Buttons automatically appear on images larger than 15% of your screen size. You can enable or disable the download and copy buttons separately.
+Buttons automatically appear on images larger than 15% of your screen size. You can enable or disable the download and copy buttons separately, and those settings apply globally across all websites.
 
 ### Dark Mode
 

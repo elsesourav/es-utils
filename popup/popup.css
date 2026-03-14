@@ -155,6 +155,39 @@ body {
   padding-left: 4px;
 }
 
+.section-note {
+  margin: -2px 0 8px 4px;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.section-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 4px 6px;
+}
+
+.secondary-btn {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.secondary-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 /* Option Item */
 .option-item {
   display: flex;
@@ -167,6 +200,10 @@ body {
 
 .option-item:hover {
   background: var(--bg-element);
+}
+
+.option-item.is-disabled {
+  opacity: 0.45;
 }
 
 .option-item.sub-option {
@@ -205,6 +242,11 @@ body {
   opacity: 0;
   width: 0;
   height: 0;
+}
+
+.toggle input:disabled + .toggle-slider {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .toggle-slider {
@@ -264,6 +306,10 @@ input:focus + .toggle-slider {
   cursor: pointer;
   z-index: 10;
   margin: 0;
+}
+
+.custom-slider input[type="range"]:disabled {
+  cursor: not-allowed;
 }
 
 .custom-slider__track {

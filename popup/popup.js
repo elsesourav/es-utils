@@ -1,17 +1,13 @@
 "use strict";
 
-const DEFAULTS = {
-  imageDownload: true,
-  copyImageUrl: true,
-  themeMode: "off",
-  brightness: 100,
-  contrast: 100,
-};
+const SETTINGS_API = ESUtilsSettings;
 const $ = (id) => document.getElementById(id);
 
 const el = {
+  extensionEnabled: $("toggleExtensionEnabled"),
   imageDownload: $("toggleImageDownload"),
   copyImageUrl: $("toggleCopyImageUrl"),
+  themeSiteScope: $("themeSiteScope"),
   darkMode: $("toggleDarkMode"),
   brightness: $("brightnessSlider"),
   brightnessVal: $("brightnessValue"),
@@ -25,7 +21,9 @@ const el = {
   contrastOpt: $("contrastOption"),
 };
 
-let settings = { ...DEFAULTS };
+let settings = { ...SETTINGS_API.GLOBAL_DEFAULTS };
+let siteThemeSettings = { ...SETTINGS_API.THEME_DEFAULTS };
+let activeSiteKey = null;
 
 function updateSlider(slider, fill, thumb, valEl, value) {
   const pct = ((value - slider.min) / (slider.max - slider.min)) * 100;
@@ -39,50 +37,108 @@ function toggleThemeOptions(show) {
   el.contrastOpt.classList.toggle("active", show);
 }
 
-async function loadSettings() {
-  const result = await chrome.storage.sync.get(["esUtilsSettings"]);
-  settings = { ...DEFAULTS, ...result.esUtilsSettings };
-  if (settings.themeMode === "auto" || settings.themeMode === "light")
-    settings.themeMode = "off";
+function setControlState(input, enabled) {
+  input.disabled = !enabled;
+  input.closest(".option-item")?.classList.toggle("is-disabled", !enabled);
+}
 
+function setThemeScopeLabel() {
+  if (!el.themeSiteScope) return;
+  if (activeSiteKey) {
+    el.themeSiteScope.textContent = `Saved for site: ${activeSiteKey}`;
+    return;
+  }
+  el.themeSiteScope.textContent =
+    "Theme settings are unavailable on this page.";
+}
+
+function applyControlAvailability() {
+  const extensionEnabled = settings.extensionEnabled !== false;
+  const hasSiteKey = Boolean(activeSiteKey);
+  const canEditImageSettings = extensionEnabled;
+  const canEditTheme = extensionEnabled && hasSiteKey;
+  const canEditThemeValues =
+    canEditTheme && siteThemeSettings.themeMode === "dark";
+
+  setControlState(el.imageDownload, canEditImageSettings);
+  setControlState(el.copyImageUrl, canEditImageSettings);
+  setControlState(el.darkMode, canEditTheme);
+  setControlState(el.brightness, canEditThemeValues);
+  setControlState(el.contrast, canEditThemeValues);
+
+  toggleThemeOptions(canEditThemeValues);
+}
+
+async function getActiveTabUrl() {
+  const tabs = await chrome.tabs.query({ currentWindow: true, active: true });
+  return tabs[0]?.url || null;
+}
+
+async function resolveActiveSiteKey() {
+  const url = await getActiveTabUrl();
+  if (!url) return null;
+  return SETTINGS_API.getSiteKeyFromUrl(url);
+}
+
+async function loadSettings() {
+  activeSiteKey = await resolveActiveSiteKey();
+  settings = await SETTINGS_API.readGlobalSettings();
+  siteThemeSettings = await SETTINGS_API.readSiteThemeSettings(activeSiteKey);
+
+  el.extensionEnabled.checked = settings.extensionEnabled;
   el.imageDownload.checked = settings.imageDownload;
   el.copyImageUrl.checked = settings.copyImageUrl;
-  el.darkMode.checked = settings.themeMode === "dark";
-  toggleThemeOptions(settings.themeMode === "dark");
+  el.darkMode.checked = siteThemeSettings.themeMode === "dark";
+  setThemeScopeLabel();
+  applyControlAvailability();
 
-  el.brightness.value = settings.brightness;
+  el.brightness.value = siteThemeSettings.brightness;
   updateSlider(
     el.brightness,
     el.brightnessFill,
     el.brightnessThumb,
     el.brightnessVal,
-    settings.brightness,
+    siteThemeSettings.brightness,
   );
-  el.contrast.value = settings.contrast;
+  el.contrast.value = siteThemeSettings.contrast;
   updateSlider(
     el.contrast,
     el.contrastFill,
     el.contrastThumb,
     el.contrastVal,
-    settings.contrast,
+    siteThemeSettings.contrast,
   );
 }
 
-async function save() {
-  settings.imageDownload = el.imageDownload.checked;
-  settings.copyImageUrl = el.copyImageUrl.checked;
-  await chrome.storage.sync.set({ esUtilsSettings: settings });
-  notifyTabs();
+async function saveGlobalSettings() {
+  settings = await SETTINGS_API.writeGlobalSettings(settings);
+  await notifyTabs();
 }
 
-function saveDarkMode(enabled) {
-  settings.themeMode = enabled ? "dark" : "off";
-  toggleThemeOptions(enabled);
-  chrome.storage.sync.set({ esUtilsSettings: settings }).then(notifyTabs);
+async function saveSiteThemeSettings() {
+  if (!activeSiteKey) return;
+
+  siteThemeSettings = await SETTINGS_API.writeSiteThemeSettings(
+    activeSiteKey,
+    siteThemeSettings,
+  );
+  await notifyTabs();
 }
 
-function saveBrightness(value) {
-  settings.brightness = parseInt(value);
+async function saveExtensionEnabled(enabled) {
+  settings.extensionEnabled = enabled;
+  applyControlAvailability();
+  await saveGlobalSettings();
+}
+
+async function saveDarkMode(enabled) {
+  siteThemeSettings.themeMode = enabled ? "dark" : "off";
+  applyControlAvailability();
+  await saveSiteThemeSettings();
+}
+
+async function saveBrightness(value) {
+  siteThemeSettings.brightness = parseInt(value, 10);
   updateSlider(
     el.brightness,
     el.brightnessFill,
@@ -90,11 +146,11 @@ function saveBrightness(value) {
     el.brightnessVal,
     value,
   );
-  chrome.storage.sync.set({ esUtilsSettings: settings }).then(notifyTabs);
+  await saveSiteThemeSettings();
 }
 
-function saveContrast(value) {
-  settings.contrast = parseInt(value);
+async function saveContrast(value) {
+  siteThemeSettings.contrast = parseInt(value, 10);
   updateSlider(
     el.contrast,
     el.contrastFill,
@@ -102,7 +158,7 @@ function saveContrast(value) {
     el.contrastVal,
     value,
   );
-  chrome.storage.sync.set({ esUtilsSettings: settings }).then(notifyTabs);
+  await saveSiteThemeSettings();
 }
 
 async function notifyTabs() {
@@ -111,21 +167,26 @@ async function notifyTabs() {
     /^(chrome|edge|about|devtools|view-source):|chrome-extension:/;
   tabs.forEach((tab) => {
     if (tab.id && tab.url && !blocked.test(tab.url)) {
-      chrome.tabs.sendMessage(
-        tab.id,
-        { type: "SETTINGS_UPDATED", settings },
-        () => {
-          if (chrome.runtime.lastError) {
-            // Ignore tabs without content script
-          }
-        },
-      );
+      chrome.tabs.sendMessage(tab.id, { type: "SETTINGS_UPDATED" }, () => {
+        if (chrome.runtime.lastError) {
+          // Ignore tabs without content script
+        }
+      });
     }
   });
 }
 
-el.imageDownload.addEventListener("change", save);
-el.copyImageUrl.addEventListener("change", save);
+el.extensionEnabled.addEventListener("change", (e) =>
+  saveExtensionEnabled(e.target.checked),
+);
+el.imageDownload.addEventListener("change", async () => {
+  settings.imageDownload = el.imageDownload.checked;
+  await saveGlobalSettings();
+});
+el.copyImageUrl.addEventListener("change", async () => {
+  settings.copyImageUrl = el.copyImageUrl.checked;
+  await saveGlobalSettings();
+});
 el.darkMode.addEventListener("change", (e) => saveDarkMode(e.target.checked));
 el.brightness.addEventListener("input", (e) => saveBrightness(e.target.value));
 el.contrast.addEventListener("input", (e) => saveContrast(e.target.value));

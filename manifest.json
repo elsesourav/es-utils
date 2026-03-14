@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ES Utils",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A collection of useful utilities including image download and copy link features",
   "permissions": ["storage", "activeTab", "downloads", "contextMenus"],
   "host_permissions": ["<all_urls>"],
@@ -35,11 +35,11 @@
       "matches": ["http://*/*", "https://*/*", "file:///*"],
       "js": [
         "utils/utils.js",
+        "utils/settings.js",
         "inject/config.js",
         "inject/theme-engine.js",
         "inject/theme-manager.js",
         "content/content-url-utils.js",
-        "content/content-observers.js",
         "content/content-buttons.js",
         "content/content-main.js"
       ],

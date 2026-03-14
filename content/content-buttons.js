@@ -68,6 +68,7 @@ function createButton(type, url, img) {
   btn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (esUtilsSettings.extensionEnabled === false) return;
     const currentUrl = getButtonUrl(btn);
     type === "download" ? downloadImage(currentUrl) : copyUrl(currentUrl, btn);
   });
@@ -107,6 +108,7 @@ function createButtonContainer(img) {
 }
 
 function setupButtons(img) {
+  if (esUtilsSettings.extensionEnabled === false) return;
   if (!esUtilsSettings.imageDownload && !esUtilsSettings.copyImageUrl) return;
   const container = createButtonContainer(img);
   if (!container) return;

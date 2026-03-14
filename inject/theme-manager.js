@@ -125,8 +125,29 @@ const ESUtilsThemeManager = (function () {
   }
 
   function createFallback(themeClass, config) {
-    const filter = `invert(100%) hue-rotate(180deg) brightness(${config.brightness}%) contrast(${config.contrast}%)`;
-    return `@media screen { html.${themeClass} { -webkit-filter: ${filter} !important; filter: ${filter} !important; background: #fff !important; } html.${themeClass} img, html.${themeClass} video { -webkit-filter: invert(100%) hue-rotate(180deg) !important; filter: invert(100%) hue-rotate(180deg) !important; } }`;
+    const brightness = Number.isFinite(Number(config.brightness))
+      ? Number(config.brightness)
+      : 100;
+    const contrast = Number.isFinite(Number(config.contrast))
+      ? Number(config.contrast)
+      : 100;
+    const inversePercent = (value) => {
+      const numeric = Number(value);
+      const safeValue = Math.max(1, Number.isFinite(numeric) ? numeric : 100);
+      return Math.round((10000 / safeValue) * 100) / 100;
+    };
+
+    let filter = "invert(100%) hue-rotate(180deg)";
+    if (brightness !== 100) filter += ` brightness(${brightness}%)`;
+    if (contrast !== 100) filter += ` contrast(${contrast}%)`;
+
+    let reverseFilter = "invert(100%) hue-rotate(180deg)";
+    if (brightness !== 100)
+      reverseFilter += ` brightness(${inversePercent(brightness)}%)`;
+    if (contrast !== 100)
+      reverseFilter += ` contrast(${inversePercent(contrast)}%)`;
+
+    return `@media screen { html.${themeClass} { -webkit-filter: ${filter} !important; filter: ${filter} !important; background: #fff !important; } html.${themeClass} img, html.${themeClass} picture, html.${themeClass} picture *, html.${themeClass} video, html.${themeClass} canvas, html.${themeClass} svg, html.${themeClass} object, html.${themeClass} embed, html.${themeClass} [style*="background-image"], html.${themeClass} iframe { -webkit-filter: ${reverseFilter} !important; filter: ${reverseFilter} !important; } }`;
   }
 
   function setupObserver() {
